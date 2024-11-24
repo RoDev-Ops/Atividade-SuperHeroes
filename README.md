@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Rodrigo Mello | RA: 10409316
 
-## Getting Started
+<h1 style="text-align:center">Atividade SuperHeroes</h1>
 
-First, run the development server:
+### OBJETIVO
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Reconstrua a seguinte aplicação utilizando NextJS
+https://codepen.io/joaquimp/pen/RwaYrYo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Como Ficou: 
+![printDaTela](./public/paginaFinal.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Código Explicado:
 
-## Learn More
+Este componente React exibe informações sobre super-heróis utilizando a API SuperHero. Ele importa as dependências necessárias (Estado do react é o CSS Global) e define uma função principal que será exportada como o componente padrão.
 
-To learn more about Next.js, take a look at the following resources:
+Dentro do componente, há uma função assíncrona que busca dados de super-heróis a partir de um código específico. Esta função constrói a URL da API usando um token de autenticação e o código do herói, faz uma requisição HTTP e processa a resposta JSON. Os dados do herói são então renderizados em um elemento HTML, incluindo uma imagem, nome e estatísticas de inteligência e força, representadas por barras de progresso estilizadas.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    async function getSuperHeroData(code) {
+        const token = '64ac5074f4f93aad5aaefff350160580';
+        const baseUrl = "https://superheroapi.com/api.php/" + token + "/";
+        const url = baseUrl + code;
+        const response = await fetch(url);
+        const data = await response.json();
+        return (
+          <div id="heroes">
+            <article>
+              <img src={data.image.url} alt={data.name} />
+              <h1>{data.name}</h1>
+              <p>
+              intelligence:  <span style={{width:`${data.powerstats.    intelligence}`+'%', background:"#F9B32F"}} ></span>
+              </p>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+              <p>
+              strength:  <span style={{width:`${data.powerstats.strength}`  +'%', background:"#FF7C6C"}} ></span>
 
-## Deploy on Vercel
+              </p>
+            </article>
+          </div>
+        );
+    }
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+O componente utiliza dois estados locais para armazenar os dados de dois super-heróis diferentes. Quando o componente é montado, um efeito colateral é executado para buscar os dados dos heróis usando a função assíncrona definida anteriormente. Os dados obtidos são armazenados nos estados locais.
+
+    const [hero1, setHero1] = React.useState(null);
+    const [hero2, setHero2] = React.useState(null);
+
+    React.useEffect(() => {
+        async function fetchData() {
+            const hero1Data = await getSuperHeroData(200);
+            const hero2Data = await getSuperHeroData(465);
+            setHero1(hero1Data);
+            setHero2(hero2Data);
+        }
+        fetchData();
+    }, []);
+
+
+Finalmente, o componente retorna um elemento HTML que exibe os dados dos dois super-heróis lado a lado, utilizando um contêiner flexível para layout.
+
+    return (
+        <div style={{ display: "flex" }}>
+          {hero1}
+          {hero2}
+        </div>
+    );
